@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <inputBudget />
-    <h3 class="balance">Balance: 50$</h3>
+    <h3 class="balance">Balance: {{ amountCount }}$</h3>
     <listBudget />
   </div>
 </template>
@@ -9,13 +9,30 @@
 <script>
 import inputBudget from './components/inputBudget';
 import listBudget from "./components/listBudget";
-
+import { mapGetters } from "vuex";
 
 export default {
   name: 'App',
   components: {
     inputBudget, listBudget
+  },
+  computed:{
+    ...mapGetters('budget', ['budgetList']),
+    amountCount(){
+      let amount = 0;
+      let valueBudgetList = Object.values(this.budgetList);
+
+      valueBudgetList.forEach(item => {
+        amount += item.value;
+      });
+
+      return amount;
+    }
+
   }
+
+
+
 }
 </script>
 

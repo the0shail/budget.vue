@@ -2,11 +2,11 @@
   <div>
     <div class="list__balance">
       <h4>Budget List</h4>
-      <div class="item__budget">
-        <h6 class="title">Зарплата</h6>
+      <div class="item__budget" v-for="budgetItem in this.budgetList" :key="budgetItem.title" :id="budgetItem.id">
+        <h6 class="title">{{ budgetItem.title }}</h6>
         <div class="info">
-          <p class="number">100</p>
-          <button class="delete">Delete</button>
+          <p class="number">{{ budgetItem.value }}$</p>
+          <button class="delete" @click="itemClickDelete">Remove</button>
         </div>
       </div>
     </div>
@@ -14,11 +14,27 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
   name: 'listBudget',
     data: () => ({}),
+  computed: {
+    ...mapGetters('budget', ['budgetList'])
+  },
   methods:{
+    ...mapActions('budget', ['itemDelete']),
+    itemClickDelete(e){
+      let keyBudgetList = Object.keys(this.budgetList);
+      let clickId = e.path[2].id;
 
+      keyBudgetList.forEach(item => {
+        if (item === clickId){
+          this.itemDelete(clickId);
+        }
+      });
+
+    }
   }
 
 }

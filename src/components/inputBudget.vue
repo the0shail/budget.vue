@@ -3,32 +3,65 @@
     <div class="input__info">
       <form class="form__info">
         <div class="input_div">
-          <p><span>*</span> Type</p>
-          <select class="input">
-            <option value="positive">Прибавить</option>
-            <option value="negative">Минусовать</option>
+          <label><span>*</span> Type</label>
+          <select class="input" v-model="select">
+            <option value="positive">Plus</option>
+            <option value="negative">Minus</option>
           </select>
         </div>
         <div class="input_div">
-          <p><span>*</span> Comments</p>
-          <input class="input" type="text" >
+          <label><span>*</span> Comments</label>
+          <input class="input" type="text" placeholder="Something" v-model="title" >
         </div>
         <div class="input_div">
-          <p><span>*</span> Value</p>
-          <input class="input" type="number">
+          <label><span>*</span> Value</label>
+          <input class="input" type="number" placeholder="100" v-model="value" >
         </div>
-        <button class="btnSubmit" >Submit</button>
+        <button class="btnSubmit" type="submit" @click="submitButton">Submit</button>
       </form>
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
+
 export default {
   name: 'inputBudget',
-  data:() => ({}),
+  data:() => ({
+    select: 'positive',
+    title: '',
+    value: '',
+  }),
   methods:{
+    ...mapActions('budget', ['addNewRep']),
+    submitButton(e){
+      e.preventDefault()
+      let num = this.value;
 
+      // Проверка на пустые строки
+      if (this.title === '' || this.value === '') {
+        alert("Вы не ввели данные\nПовторите попытку")
+      }
+      else {
+        // Проверка минуса в value
+        if ((this.select === 'negative' && Math.sign(this.value) === 1) ||
+            (this.select === 'positive' && Math.sign(this.value) === -1) ){
+          num = -this.value;
+        }
+
+        let newRep = {
+          title: this.title,
+          value: num,
+        }
+        this.title = '';
+        this.value = '';
+
+        this.addNewRep(newRep)
+      }
+
+    }
   }
 }
 </script>
@@ -47,8 +80,7 @@ export default {
 .input__info .input_div{
   margin-bottom: 10px ;
 }
-.input__info .input_div p{
-  margin:0 0 10px 0;
+.input__info .input_div label{
   font-size: 14px;
 }
 .input__info .form__info{
